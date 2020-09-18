@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     journal = models.Entry.select().limit(5)
-    return render_template(url_for('index.html'))
+    return render_template('index.html', journal=journal)
 
 @app.route('/hello/')
 @app.route('/hello/<name>')
