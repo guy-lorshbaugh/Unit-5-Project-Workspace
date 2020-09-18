@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -11,6 +13,11 @@
         <link rel="stylesheet" href="css/site.css">
     </head>
     <body>
+        <div>
+                {% for entry in journal.content %}
+                    {{ entry }}
+                {% endfor %}
+        </div>
         <header>
             <div class="container">
                 <div class="site-header">
@@ -48,3 +55,4 @@
         </footer>
     </body>
 </html>
+
