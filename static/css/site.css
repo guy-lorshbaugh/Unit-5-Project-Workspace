@@ -109,6 +109,13 @@ h3 {
 	font-weight: 600;
 	text-transform: uppercase;
 }
+.small {
+	margin: 0;
+	font-weight: 200;
+	line-height: 1em;
+	font-size: 12px;
+	color: #000;
+}
 p {
 	line-height: 1.8em;
 	font-size: 18px;

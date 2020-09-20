@@ -1,14 +1,17 @@
 import datetime
 
-# from flask_bcrypt import generate_password_hash
-# from flask_login import UserMixin
 from peewee import *
 
 DATABASE = SqliteDatabase('journal.db')
 
 class Entry(Model):
+    # id = AutoField(unique=True)
+    title = CharField(max_length=100)
     date = DateTimeField(default=datetime.datetime.now)
-    content = TextField()
+    time_spent = IntegerField(default=0)
+    learned = TextField(null=False)
+    remember = TextField(default=" ")
+
 
     class Meta:
         database = DATABASE
