@@ -45,17 +45,15 @@ def detail(id):
 @app.route("/entries/<id>/edit", methods=('GET', 'POST'))
 def edit(id):
     info = models.Entry.select().where(models.Entry.id==id).get()
-    form = forms.Post()
-    form.validate()
+    form = forms.Edit()
     form.title.data = info.title
     form.time_spent.data = info.time_spent
     form.learned.data = info.learned
     form.remember.data = info.remember
-    if form.is_submitted():
-        info = models.Entry.select().where(models.Entry.id==id).get()
+    if form.validate_on_submit():
         info.title = form.title.data
         info.date = datetime.datetime.combine(form.date.data,
-                        datetime.datetime.now().time())
+                    datetime.datetime.now().time())
         info.time_spent = form.time_spent.data
         info.learned = form.learned.data
         info.remember = form.remember.data
