@@ -31,6 +31,12 @@ def create():
             learned=form.learned.data,
             remember=form.remember.data
         )
+        tags = form.tags.data.split(',')
+        models.EntryTags.create(
+            tags=form.tags.data
+        )
+        for item in tags:
+            models.Tags.create(tag=item)
         flash("Your Entry has been created!")
         return redirect(url_for('index'))
     return render_template('new.html', form=form)
@@ -39,17 +45,17 @@ def create():
 @app.route("/entries/<id>")
 def detail(id):
     id = models.Entry.select().where(models.Entry.id==id)
-    return render_template("detail.html", id=id)
+    tags = (models.Tags
+              .select()
+              .where(models.Tags.id==id))
+    return render_template("detail.html", id=id, tags=tags)
 
 
 @app.route("/entries/<id>/edit", methods=('GET', 'POST'))
 def edit(id):
     info = models.Entry.select().where(models.Entry.id==id).get()
-    form = forms.Edit()
-    form.title.data = info.title
-    form.time_spent.data = info.time_spent
-    form.learned.data = info.learned
-    form.remember.data = info.remember
+    form = forms.Post()
+    # model = models.Entry
     if form.validate_on_submit():
         info.title = form.title.data
         info.date = datetime.datetime.combine(form.date.data,
@@ -60,14 +66,14 @@ def edit(id):
         info.save()
         flash("Your Entry has been edited!")
         return redirect(url_for('index'))
-    return render_template("edit.html", form=form, id=id)
+    return render_template("edit.html", form=form, id=id, models=models)
 
 
 @app.route("/entries/<id>/delete")
 def delete(id):
-    models.Entry.select().where(models.Entry.id==id).delete_instance()
-    # flash("Your journal entry has been deleted.", "deleted")
-    return render_template("index.html")
+    models.Entry.get(models.Entry.id==id).delete_instance()
+    flash("Your journal entry has been deleted.", "deleted")
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
@@ -79,5 +85,8 @@ if __name__ == '__main__':
         models.Entry.create(
             title="Welcome!",
             learned="Welcome to the Learning Journal!",
+        )
+        models.Tags.create(
+            tag="welcome"
         )
     app.run(debug=True, host='127.0.0.1', port=80)

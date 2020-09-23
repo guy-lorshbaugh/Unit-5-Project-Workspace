@@ -15,7 +15,7 @@
             <div class="container">
                 <div class="site-header">
                     <a class="logo" href="{{ url_for('index') }}"><i class="material-icons">library_books</i></a>
-                    <a class="button icon-right" href="new.html"><span>New Entry</span> <i class="material-icons">add</i></a>
+                    <a class="button icon-right" href="{{ url_for('create') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
                 </div>
             </div>
         </header>
@@ -23,19 +23,25 @@
             <div class="container">
                 <div class="edit-entry">
                     <h2>Edit Entry</h2>
-                    {% from 'macros.html' import render_field %}
+                    <!-- {% from 'macros.html' import render_field %} -->
                     <form method="POST" action="">
                         {{ form.hidden_tag() }}
-                            <label for="title">Title</label>
-                            {{ render_field(form.title) }}
-                            <label for="date"> Date</label>
-                            {{ render_field(form.date) }}
-                            <label for="time_spent">Time Spent</label>
-                            {{ render_field(form.time_spent) }}
-                            <label for="learned">What I Learned</label>
-                            {{ render_field(form.learned) }}
-                            <label for="remember">Resources to Remember</label>
-                            {{ render_field(form.remember) }}
+                        {% set info = models.Entry.select().where(models.Entry.id==id).get() %}
+                        <label for="title">Title</label>
+                        {% set process = form.title.process_data(info.title) %}
+                        {{ form.title() }}
+                        <label for="date"> Date</label>
+                        {% set process = form.date.process_data(info.date) %}
+                        {{ form.date() }}
+                        <label for="time_spent">Time Spent</label>
+                        {% set process = form.time_spent.process_data(info.time_spent) %}
+                        {{ form.time_spent() }}
+                        <label for="learned">What I Learned</label>
+                        {% set process = form.learned.process_data(info.learned) %}
+                        {{ form.learned() }}
+                        <label for="remember">Resources to Remember</label>
+                        {% set process = form.remember.process_data(info.remember) %}
+                        {{ form.remember() }}
                         <button type="submit" id="submit">Post!</button>
                         <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
                     </form>

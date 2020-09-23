@@ -12,7 +12,7 @@
                         {% for item in entry.learned.split('\n') %}
                             <p>{{ item }}</p>
                         {% endfor %}
-                    {% if entry.remember != " ": %}
+                    {% if entry.remember != " " and entry.remember != "": %}
                         <p><u>Resources to Remember:</u><br>
                             {% for item in entry.remember.split('\n') %}
                                 {% if "http" in item: %}
@@ -24,13 +24,19 @@
                         </p>
                     {% endif %}
                 {% endfor %}
+                <p>Tags:
+                {% for tag in tags: %}
+                    {{ tag.tags }}
+                {% endfor %}
+            </p>
             </article>
         </div>
     </div>
     <div class="edit">
-        {% for entry in id: %}
-        <p><a href="{{ url_for('edit', id=entry.id) }}">Edit Entry</a></p>
-        {% endfor %}
+        <p>
+            <a href="{{ url_for('edit', id=id.id) }}">Edit Entry</a>
+            <a href="{{ url_for('delete', id=id.id) }}">Delete Entry</a>
+        </p>
     </div>
 </section>
 {% endblock %}

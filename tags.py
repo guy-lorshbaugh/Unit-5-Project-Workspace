@@ -17,7 +17,7 @@ class Entry(Model):
 
 
 class Tags(Model):
-    tag = CharField(null=False)
+    tags = CharField(null=False)
 
     class Meta:
         database = DATABASE
@@ -25,7 +25,7 @@ class Tags(Model):
 
 class EntryTags(Model):
     entry = ForeignKeyField(Entry)
-    tags = ForeignKeyField(Tags, related_name="tag")
+    tags = ForeignKeyField(Tags)
     
     class Meta:
         database = DATABASE
@@ -35,4 +35,12 @@ def initialize():
     DATABASE.connect()
     DATABASE.create_tables([Entry, Tags, EntryTags], safe=True)
     DATABASE.close()
+
+# for item in Tags.select():
+#     print(item.id, item.tags)
+
+id_2 = Tags.get(Tags.id==2)
+
+for tag in Tags.select():
+    print(tag.tags)
 
