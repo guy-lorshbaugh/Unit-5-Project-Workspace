@@ -5,16 +5,15 @@
     <div class="container">
         <div class="entry-list single">
             <article>
-                {% for entry in id %}
-                    <h2>{{ entry.title}}</h2>
-                    <div class="small">{{ entry.date.strftime('%B %d %I:%M %p') }},
-                        Hours spent: {{ entry.time_spent }}</div>
-                        {% for item in entry.learned.split('\n') %}
+                    <h2>{{ id.title}}</h2>
+                    <div class="small">{{ id.date.strftime('%B %d %I:%M %p') }},
+                        Hours spent: {{ id.time_spent }}</div>
+                        {% for item in id.learned.split('\n') %}
                             <p>{{ item }}</p>
                         {% endfor %}
-                    {% if entry.remember != " " and entry.remember != "": %}
+                    {% if id.remember != " " and id.remember != "": %}
                         <p><u>Resources to Remember:</u><br>
-                            {% for item in entry.remember.split('\n') %}
+                            {% for item in id.remember.split('\n') %}
                                 {% if "http" in item: %}
                                     {{ item|urlize(40, True, target="_blank") }}<br>
                                 {% else: %}
@@ -23,7 +22,6 @@
                             {% endfor %}
                         </p>
                     {% endif %}
-                {% endfor %}
                 <p>Tags:
                 {% for tag in tags: %}
                     {{ tag.tags }}

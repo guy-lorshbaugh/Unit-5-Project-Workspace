@@ -1,46 +1,63 @@
 import datetime
-
 from peewee import *
 
-DATABASE = SqliteDatabase('journal.db')
+# import logging
+# logger = logging.getLogger('peewee')
+# logger.addHandler(logging.StreamHandler())
+# logger.setLevel(logging.DEBUG)
 
-class Entry(Model):
-    # id = AutoField(unique=True)
-    title = CharField(max_length=100)
-    date = DateTimeField(default=datetime.datetime.now)
-    time_spent = IntegerField(default=0)
-    learned = TextField(null=False)
-    remember = TextField(default=" ")
+db = SqliteDatabase('test.db')
 
+class BaseModel(Model):
     class Meta:
-        database = DATABASE
+        database = db
+
+class User(BaseModel):
+    username = TextField()
+
+class Tweet(BaseModel):
+    content = TextField()
+    timestamp = DateTimeField(default=datetime.datetime.now)
+    user = ForeignKeyField(User, backref='tweets')
+
+class Favorite(BaseModel):
+    user = ForeignKeyField(User, backref='favorites')
+    tweet = ForeignKeyField(Tweet, backref='favorites')
 
 
-class Tags(Model):
-    tags = CharField(null=False)
+def populate_test_data():
+    db.create_tables([User, Tweet, Favorite])
 
-    class Meta:
-        database = DATABASE
+    data = (
+        ('huey', ('meow', 'hiss', 'purr')),
+        ('mickey', ('woof', 'whine')),
+        ('zaizee', ()))
+    for username, tweets in data:
+        user = User.create(username=username)
+        for tweet in tweets:
+            Tweet.create(user=user, content=tweet)
 
-
-class EntryTags(Model):
-    entry = ForeignKeyField(Entry)
-    tags = ForeignKeyField(Tags)
-    
-    class Meta:
-        database = DATABASE
+    # Populate a few favorites for our users, such that:
+    favorite_data = (
+        ('huey', ['whine']),
+        ('mickey', ['purr']),
+        ('zaizee', ['meow', 'purr']))
+    for username, favorites in favorite_data:
+        user = User.get(User.username == username)
+        for content in favorites:
+            tweet = Tweet.get(Tweet.content == content)
+            Favorite.create(user=user, tweet=tweet)
 
 
 def initialize():
-    DATABASE.connect()
-    DATABASE.create_tables([Entry, Tags, EntryTags], safe=True)
-    DATABASE.close()
+    db.connect()
+    db.create_tables([BaseModel, User, Tweet, Favorite], safe=True)
+    db.close()
 
-# for item in Tags.select():
-#     print(item.id, item.tags)
+initialize()
+# populate_test_data()
 
-id_2 = Tags.get(Tags.id==2)
+query = Tweet.select().join(User).where(User.username == 'huey')
 
-for tag in Tags.select():
-    print(tag.tags)
-
+for tweet in query:
+    print(tweet.content)

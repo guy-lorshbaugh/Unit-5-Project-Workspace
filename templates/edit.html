@@ -1,24 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>MyJournal</title>
-        <link href="https://fonts.googleapis.com/css?family=Cousine:400" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Work+Sans:600" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="../../static/css/normalize.css">
-        <link rel="stylesheet" href="../../static/css/site.css">
-    </head>
-    <body>
-        <header>
-            <div class="container">
-                <div class="site-header">
-                    <a class="logo" href="{{ url_for('index') }}"><i class="material-icons">library_books</i></a>
-                    <a class="button icon-right" href="{{ url_for('create') }}"><span>New Entry</span> <i class="material-icons">add</i></a>
-                </div>
-            </div>
-        </header>
+{% extends "layout.html" %}
+
+{% block content %}
         <section>
             <div class="container">
                 <div class="edit-entry">
@@ -27,11 +9,15 @@
                     <form method="POST" action="">
                         {{ form.hidden_tag() }}
                         {% set info = models.Entry.select().where(models.Entry.id==id).get() %}
+                        {% if models.EntryTags.select().where(models.EntryTags.entry_id==id).exists(): %}
+                            {% set tags = models.EntryTags.get(models.EntryTags.entry_id==id) %}
+                        {% else: %}
+                            {% set tags = "" %}
+                        {% endif %}
                         <label for="title">Title</label>
                         {% set process = form.title.process_data(info.title) %}
                         {{ form.title() }}
                         <label for="date"> Date</label>
-                        {% set process = form.date.process_data(info.date) %}
                         {{ form.date() }}
                         <label for="time_spent">Time Spent</label>
                         {% set process = form.time_spent.process_data(info.time_spent) %}
@@ -42,16 +28,13 @@
                         <label for="remember">Resources to Remember</label>
                         {% set process = form.remember.process_data(info.remember) %}
                         {{ form.remember() }}
+                        <label for="Tags">Tags</label>
+                        {% set process = form.tags.process_data(tags.tags_id) %}
+                        {{ form.tags() }}
                         <button type="submit" id="submit">Post!</button>
                         <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>
                     </form>
                 </div>
             </div>
         </section>
-        <footer>
-            <div>
-                &copy; MyJournal
-            </div>
-        </footer>
-    </body>
-</html>
+{% endblock %}

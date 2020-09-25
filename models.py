@@ -4,7 +4,12 @@ from peewee import *
 
 DATABASE = SqliteDatabase('journal.db')
 
-class Entry(Model):
+class BaseModel(Model):
+    class Meta:
+        database = DATABASE
+
+
+class Entry(BaseModel):
     # id = AutoField(unique=True)
     title = CharField(max_length=100)
     date = DateTimeField(default=datetime.datetime.now)
@@ -12,23 +17,14 @@ class Entry(Model):
     learned = TextField(null=False)
     remember = TextField(default=" ")
 
-    class Meta:
-        database = DATABASE
 
-
-class Tags(Model):
+class Tags(BaseModel):
     tag = CharField(null=False)
 
-    class Meta:
-        database = DATABASE
 
-
-class EntryTags(Model):
-    entry = ForeignKeyField(Entry)
-    tags = ForeignKeyField(Tags, related_name="tag")
-    
-    class Meta:
-        database = DATABASE
+class EntryTags(BaseModel):
+    entry_id = ForeignKeyField(Entry)
+    tags = ForeignKeyField(Tags)
 
 
 def initialize():
@@ -36,3 +32,5 @@ def initialize():
     DATABASE.create_tables([Entry, Tags, EntryTags], safe=True)
     DATABASE.close()
 
+# info = Entry.select().where(Entry.id==1).get()
+# print(info.learned, info.remember, info.tags)
