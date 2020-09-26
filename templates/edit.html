@@ -9,15 +9,11 @@
                     <form method="POST" action="">
                         {{ form.hidden_tag() }}
                         {% set info = models.Entry.select().where(models.Entry.id==id).get() %}
-                        {% if models.EntryTags.select().where(models.EntryTags.entry_id==id).exists(): %}
-                            {% set tags = models.EntryTags.get(models.EntryTags.entry_id==id) %}
-                        {% else: %}
-                            {% set tags = "" %}
-                        {% endif %}
                         <label for="title">Title</label>
                         {% set process = form.title.process_data(info.title) %}
                         {{ form.title() }}
                         <label for="date"> Date</label>
+                        {% set process = form.date.process_data(info.date) %}
                         {{ form.date() }}
                         <label for="time_spent">Time Spent</label>
                         {% set process = form.time_spent.process_data(info.time_spent) %}
@@ -29,7 +25,7 @@
                         {% set process = form.remember.process_data(info.remember) %}
                         {{ form.remember() }}
                         <label for="Tags">Tags</label>
-                        {% set process = form.tags.process_data(tags.tags_id) %}
+                        {% set process = form.tags.process_data(tags) %}
                         {{ form.tags() }}
                         <button type="submit" id="submit">Post!</button>
                         <a href="{{ url_for('index') }}" class="button button-secondary">Cancel</a>

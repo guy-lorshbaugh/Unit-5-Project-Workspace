@@ -116,6 +116,12 @@ h3 {
 	font-size: 12px;
 	color: #000;
 }
+.small a:active,
+	   a:hover 
+	   a:visited{
+	text-decoration: none;
+	color: #678f89;
+}
 p {
 	line-height: 1.8em;
 	font-size: 18px;

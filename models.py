@@ -10,7 +10,6 @@ class BaseModel(Model):
 
 
 class Entry(BaseModel):
-    # id = AutoField(unique=True)
     title = CharField(max_length=100)
     date = DateTimeField(default=datetime.datetime.now)
     time_spent = IntegerField(default=0)
@@ -19,18 +18,15 @@ class Entry(BaseModel):
 
 
 class Tags(BaseModel):
-    tag = CharField(null=False)
+    tag = CharField(unique=True)
 
 
 class EntryTags(BaseModel):
     entry_id = ForeignKeyField(Entry)
-    tags = ForeignKeyField(Tags)
+    tag_id = ForeignKeyField(Tags)
 
 
 def initialize():
     DATABASE.connect()
     DATABASE.create_tables([Entry, Tags, EntryTags], safe=True)
     DATABASE.close()
-
-# info = Entry.select().where(Entry.id==1).get()
-# print(info.learned, info.remember, info.tags)

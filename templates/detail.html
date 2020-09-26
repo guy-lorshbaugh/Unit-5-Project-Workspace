@@ -8,9 +8,11 @@
                     <h2>{{ id.title}}</h2>
                     <div class="small">{{ id.date.strftime('%B %d %I:%M %p') }},
                         Hours spent: {{ id.time_spent }}</div>
+                        <p>
                         {% for item in id.learned.split('\n') %}
-                            <p>{{ item }}</p>
+                            {{ item }}<br>
                         {% endfor %}
+                        </p>
                     {% if id.remember != " " and id.remember != "": %}
                         <p><u>Resources to Remember:</u><br>
                             {% for item in id.remember.split('\n') %}
@@ -21,12 +23,13 @@
                                 {% endif %}
                             {% endfor %}
                         </p>
+                        <div class="small">Tags:|
+                            {% for tag in tags: %}
+                            <a class="small" style="text-decoration:none;" href="{{ url_for('tag', tag=tag.tag) }}">{{ tag.tag }} |</a>
+                            {% endfor %}
+                        </div>
                     {% endif %}
-                <p>Tags:
-                {% for tag in tags: %}
-                    {{ tag.tags }}
-                {% endfor %}
-            </p>
+
             </article>
         </div>
     </div>
