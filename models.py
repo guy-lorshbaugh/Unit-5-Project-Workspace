@@ -39,8 +39,9 @@ class User(UserMixin, BaseModel):
                 cls.create(
                     username=username,
                     password=generate_password_hash(password),
-                    is_active=True,
-                    is_admin=admin)
+                    # is_active=True,
+                    # is_admin=True
+                    )
         except IntegrityError:
             raise ValueError("User already exists")
 

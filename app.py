@@ -121,11 +121,15 @@ def logout():
 def register():
     form = forms.RegisterForm()
     if form.validate_on_submit():
-        flash("Yay, you registered!", "success")
-        models.User.create_user(
-            username=form.username.data,
-            password=form.password.data
-        )
+        try:
+            models.User.create_user(
+                username=form.username.data,
+                password=form.password.data
+            )
+        except ValueError:
+            flash("That username already exists")
+            return redirect(url_for('register'))
+        flash(f"Registration successful. Welcome aboard, {form.username.data}!", "success")
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
 
