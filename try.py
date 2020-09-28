@@ -17,18 +17,21 @@ def get_tags(id):
     return tags
 
 
-query = (models.Entry
-            .select()
-            .join(models.EntryTags)
-            .join(models.Tags)
-            .where(models.EntryTags.tag_id == 2)
-)
+# query = (models.Entry
+#             .select()
+#             .join(models.EntryTags)
+#             .join(models.Tags)
+#             .where(models.EntryTags.tag_id == 2)
+# )
 
-for item in query:
-    print(f"""
-    {item.date.strftime('%B %d %I:%M %p')}
+# for item in query:
+#     print(f"""
+#     {item.date.strftime('%B %d %I:%M %p')}
     
-{item.learned}
+# {item.learned}
 
 
-        """)
+#         """)
+
+word = models.User.get(models.User.id==1)
+print(word.password)

@@ -1,8 +1,11 @@
 import datetime
 
 from flask import (Flask, url_for, render_template, redirect,
-                g, flash)
+                flash)
 from flask_wtf.csrf import CSRFProtect
+from flask_bcrypt import check_password_hash
+from flask_login import (LoginManager, login_user, logout_user,
+                             login_required, current_user)
 
 import models
 import forms
@@ -16,6 +19,45 @@ app = Flask(__name__)
 app.secret_key ="430po9tgjlkifdsc.p0ow40-23365fg4h,."
 csrf = CSRFProtect()
 csrf.init_app(app)
+
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+def start():
+    """For the sake of code review, this funciton creates initial
+    post and user login information.
+    """
+    journal= models.Entry
+    if journal.select().where(journal.id==1).exists():
+        pass
+    else:
+        models.Entry.create(
+            id = 1,
+            title="Welcome!",
+            learned="Welcome to the Learning Journal!",
+        )
+        tags_list = ["welcome", "python", "wtforms"]
+        entry = models.Entry.get(models.Entry.title == "Welcome!")
+        for item in tags_list:
+            try:
+                models.Tags.create(tag=item)
+            except:
+                pass
+        for tag in tags_list:
+            tag_data = models.Tags.get(models.Tags.tag ** tag)
+            models.EntryTags.create(
+                entry_id=entry.id,
+                tag_id=tag_data
+            )
+    if models.User.select().where(models.User.id==1).exists():
+        pass
+    else:
+        models.User.create_user(
+            username="firstuser",
+            password="firstword"
+        )
 
 
 def get_tags(id):
@@ -40,6 +82,54 @@ def del_tags(id):
         item.delete_instance()
 
 
+@login_manager.user_loader
+def load_user(userid):
+    try:
+        return models.User.get(models.User.id == userid)
+    except models.DoesNotExist:
+        return None
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        try:
+            user = models.User.get(models.User.username == form.username.data)
+        except:
+            flash("User name or password incorrect")
+            return redirect(url_for('login'))
+        if check_password_hash(user.password, form.password.data):
+            login_user(user)
+            flash('Logged in successfully.')
+        else:
+            flash("User name or password incorrect")
+            return redirect(url_for('login'))
+        return redirect(url_for('index'))
+    return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("You've been logged out! Come back soon!", "success")
+    return redirect(url_for('index'))
+
+
+@app.route('/register', methods=('GET', 'POST'))
+def register():
+    form = forms.RegisterForm()
+    if form.validate_on_submit():
+        flash("Yay, you registered!", "success")
+        models.User.create_user(
+            username=form.username.data,
+            password=form.password.data
+        )
+        return redirect(url_for('index'))
+    return render_template('register.html', form=form)
+
+
 @app.route("/")
 @app.route("/entries")
 def index():
@@ -54,6 +144,7 @@ def detail(id):
 
 
 @app.route("/entries/new", methods=('GET', 'POST'))
+@login_required
 def create():
     form = forms.Post()
     if form.validate_on_submit():
@@ -84,6 +175,7 @@ def create():
 
 
 @app.route("/entries/<id>/edit", methods=('GET', 'POST'))
+@login_required
 def edit(id):
     entry = models.Entry.select().where(models.Entry.id == id).get()
     tags_list = []
@@ -128,8 +220,8 @@ def tag(tag):
     return render_template("tag.html", models=models, id=query)
 
 
-
 @app.route("/entries/<id>/delete")
+@login_required
 def delete(id):
     models.Entry.get(models.Entry.id==id).delete_instance()
     del_tags(id)
@@ -139,12 +231,5 @@ def delete(id):
 
 if __name__ == '__main__':
     models.initialize()
-    journal= models.Entry
-    if journal.select().where(journal.id==1).exists():
-        pass
-    else:
-        models.Entry.create(
-            title="Welcome!",
-            learned="Welcome to the Learning Journal!",
-        )
+    start()
     app.run(debug=True, host='127.0.0.1', port=80)

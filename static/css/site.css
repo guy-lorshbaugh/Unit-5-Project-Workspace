@@ -9,10 +9,12 @@ body {
 	color: #404a49;
 	font-family: 'Cousine', serif;
 	font-weight: 400;
+	margin: 0;
+	padding: 0;
 }
 .container {
 	margin: 0 auto;
-	padding: 0 25px;
+	padding: 0;
 }
 header .site-header {
 	margin: 0 auto;
@@ -20,18 +22,36 @@ header .site-header {
 }
 header .logo i {
 	color: #678f89;
-	margin: 20px 0 0 -5px;
-	float: left;
 	font-size: 40px;
 }
 header .button {
-	float: right;
-	margin: 33px 0 0 0;
+	margin: 0px 0 0 0;
 }
 footer {
 	text-align: center;
 	padding: 35px 0;
 	border-top: 2px dotted #678f89;
+}
+ul {
+	list-style-type: none;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	background-color: white;
+	padding-top: 10px;
+  }
+ul li {
+	line-height: 1.8em;
+	font-size: 18px;
+	color: #678f89;
+	float: left;
+}
+ul li a {
+	display: block;
+	color: #678f89;
+	width: 150px;
+	text-decoration: none;
+	float: left;
 }
 
 
@@ -132,17 +152,9 @@ p a {
 	color: #678f89;
 	text-decoration: none;
 }
-ul li {
-	line-height: 1.8em;
-	font-size: 18px;
+.flash {
+	color: #987076;
 }
-ul li a {
-	border-bottom: 2px solid #678f89;
-	line-height: 1.8em;
-	color: #678f89;
-	text-decoration: none;
-}
-
 
 
 /* ==========================================================================
